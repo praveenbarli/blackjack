@@ -1,0 +1,38 @@
+<html>
+  <head>
+  <h1 align='middle'>Black Jack Game</h1>
+     <script src="dealer.js" type = "text/JavaScript"></script>
+	  <script src="Hand.js" type = "text/JavaScript"></script>
+   <script type="text/JavaScript">
+       /* $(document).ready(function() {
+                console.log( "ready!" );
+               
+       });*/
+        function startGame(){
+           console.log( "Game Started!" );
+           var dealer = new Dealer();
+            dealer.startGame();
+
+        }
+    </script>
+  </head>
+  <body>
+     <table class="auto-style1">
+        <tr>
+            <td class="auto-style4"></td>
+            <td class="auto-style2"></td>
+        </tr>
+        <tr>
+            <td class="auto-style5"></td>
+            <td class="auto-style3">
+                <input id="startgame" type="submit" value="Start Game" onclick="startGame()"/>
+                <input id="hit" type="submit" value="Hit" />
+                <input id="stand" type="submit" value="Stand" />
+
+            </td>
+        </tr>
+    </table>
+    
+  </body>
+
+</html>
