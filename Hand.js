@@ -7,7 +7,7 @@ var Hand = function(name) {
 	var cards = [];
     var currentScore = 0;
 	var scoredCardsCnt = 0;
-	
+	var lastReturnedCardIndex=-1;
     //private methods
 	function calculateScore() {
 		//console.log("Deck constructor called");
@@ -73,6 +73,15 @@ var Hand = function(name) {
 		} 
 		    return currentScore;
 		
+	}
+	
+	this.getCards = function(){
+	    var card_values = [];
+	    for(var i = lastReturnedCardIndex +1; i<cards.length;i++){
+		  card_values.push(cards[i].faceValue + " " + cards[i].suitType);
+		}
+		lastReturnedCardIndex = i -1;
+		return card_values;
 	}
 		
 }
