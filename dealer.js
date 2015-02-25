@@ -1,29 +1,51 @@
 //constructor
-var Dealer = function () {
-
+var CardGame = function () {
+  //member variables
+  this.deck = new Deck();
+  //player could be made array in future.
+  this.player = new Hand("Player");
+  this.dealer = new Hand("Dealer");
+  
 };
+
 
 //member methods
-Dealer.prototype.startGame = function () {
+CardGame.prototype.startGame = function () {
     console.log("Hello, I'm ");
-     var deck = new Deck();
-	 var player = new Hand();
-	 deck.setup();
+	 
+     
+	 //Initialize deck and shuffle
+	 this.deck.setup();
+	 
+	 //distribute two cards each to dealer and player
     //var deck = Object.create(Deck); //with this constructor function is not called
     //console.log(deck.Deck());
-    console.log("Getting 2 cards for dealer");
-        for(var i = 0;i<2;i++){
-            var nextCard = deck.getCard();
-			player.addCard(nextCard);
-            //var nextCard = getCard(deck.cards);
-            console.log(i+1 + " " + faceValue[nextCard.faceValue] + " " + nextCard.suitType);
-        }
-		
-	console.log("cards length after removing two" + deck.getCount());
+    
+	this.distributeCards(this.player, 2);
+	this.distributeCards(this.dealer, 2);
+	console.log("cards length after removing two" + this.deck.getCount());
 	
-	console.log("Player score" + player.score());
+	console.log("Player score" + this.player.score());
 			
 };
+CardGame.prototype.distributeCards = function(hand,count){
+     console.log("Giving " + count + " cards to " + hand.name);
+	 var cardsAvail = this.deck.length;
+	 if(cardsAvail < count){
+	    console.log("Not enough cards to distribute to " + hand.name);
+		return;
+	} else {
+	    for(var i = 0;i< count;i++){
+            var nextCard = this.deck.getNextCard();
+			hand.addCard(nextCard);
+            //var nextCard = getNextCard(deck.cards);
+            console.log(i+1 + " " + faceValue[nextCard.faceValue] + " " + nextCard.suitType);
+        }
+	}
+       
+};
+
+
 
 
 var Card = function (value,suit) {
@@ -79,13 +101,16 @@ var Deck = function() {
 			// more statements
 		}
 
-		for (var i = 0; i < this.cards.length; i++) {
+		/*for (var i = 0; i < this.cards.length; i++) {
 			console.log(i + " " + this.cards[i].faceValue + " " + this.cards[i].suitType);
+		}*/
+		for(var card in this.cards){
+		   console.log(card.faceValue + card.suitType);
 		}
 	
 	}
 
-	this.getCard = function() {
+	this.getNextCard = function() {
 	    console.log("Deck: Get Card");
 		var len = this.cards.length;
 		var nextCard;
