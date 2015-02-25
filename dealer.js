@@ -5,7 +5,7 @@ var CardGame = function () {
   //player could be made array in future.
   this.player = new Hand("Player");
   this.dealer = new Hand("Dealer");
-  
+  this.status = GameStatus.STOPPED;
 };
 
 
@@ -16,7 +16,10 @@ CardGame.prototype.startGame = function () {
      
 	 //Initialize deck and shuffle
 	 this.deck.setup();
+	 this.deck.shuffle();
+	 this.deck.printDeck();
 	 
+	 this.status = GameStatus.STARTED;
 	 //distribute two cards each to dealer and player
     //var deck = Object.create(Deck); //with this constructor function is not called
     //console.log(deck.Deck());
@@ -30,11 +33,15 @@ CardGame.prototype.startGame = function () {
 		this.evaluatePlayerStatus();		
 };
 
+var GameStatus = { STARTED:"started", STOPPED:"stopped"}
+
+
 CardGame.prototype.evaluatePlayerStatus = function() {
       var currentPlayerStatus = this.player.getStatus();
-	if(currentPlayerStatus == "ingame" || currentPlayerStatus == "stand"){
+	  console.log("Player status" + currentPlayerStatus);
+	if(currentPlayerStatus == HandStatus.INGAME || currentPlayerStatus == HandStatus.STAND){
 	    console.log("In Game. enable hit, stand. ");
-	} else if(currentPlayerStatus == "blackJack"){
+	} else if(currentPlayerStatus == HandStatus.BLACKJACK){
 	    console.log("Player wins . BlackJack . Disable hit, stand.");
 	} else {
 	   console.log("Dealer WINS. Player busted, Disable hit, stand. ");
@@ -42,13 +49,13 @@ CardGame.prototype.evaluatePlayerStatus = function() {
 };
 
 CardGame.prototype.Hit = function(hand){
-  console.log("hit called");
+  
   if(hand == undefined) {
      hand = this.player;
 	}
-  
+  console.log("hit called by " + hand.name);
   this.distributeCards(hand, 1);
-  if(hand.name == "dealer"){
+  if(hand.name == "Dealer"){
     this.evaluateDealerStatus();
   }else{
     this.evaluatePlayerStatus();
@@ -58,29 +65,32 @@ CardGame.prototype.Hit = function(hand){
 
 CardGame.prototype.Stand = function(){
   console.log("stand called");
-  this.evaluateDealerStatus();
+   this.evaluateDealerStatus();
+ //this.evaluatePlayerStatus();
   
   };
   
   CardGame.prototype.evaluateDealerStatus = function() {
-      var currentDealerStatus = this.player.getStatus();
-	if(currentDealerStatus == "busted"){
+      var currentDealerStatus = this.dealer.getStatus();
+	  console.log("Dealer status :" + currentDealerStatus);
+	if(currentDealerStatus == HandStatus.BUSTED){
 	    console.log("Player WINS. Dealer busted. Enable Start game button and disable hit, stand. ");
 	    
-	} else if(currentDealerStatus == "blackJack"){
+	} else if(currentDealerStatus == HandStatus.BLACKJACK){
 	    console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
-	} else if(currentDealerStatus == "stand"){
+	} else if(currentDealerStatus == HandStatus.STAND){
 	      var dealerScore = this.dealer.getScore();
 		  var playerScore = this.player.getScore();
-		  if(dealerScore>playerScore){
-		      console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
+		  console.log("dealer score" + dealerScore + "playerscore: " + playerScore);
+		  if(dealerScore > playerScore){
+		      console.log("Dealer wins . Enable Start game. Disable hit, stand.");
 		  } else if(dealerScore == playerScore){
 		       console.log("Tie. Enable Start game. Disable hit, stand.");
 		  } else{
-		      hit(this.dealer);
+		      this.Hit(this.dealer);
 		  }
 	} else {
-	    hit(this.dealer);
+	    this.Hit(this.dealer);
 	}
 };
 
@@ -163,15 +173,22 @@ var Deck = function() {
 
 		/*for (var i = 0; i < this.cards.length; i++) {
 			console.log(i + " " + this.cards[i].faceValue + " " + this.cards[i].suitType);
-		}*/
+		}
 		for(var card in this.cards){
 		   console.log(card.faceValue + card.suitType);
+		}*/
+	
+	}
+	
+	this.printDeck = function(){
+		for (var i = 0; i < this.cards.length; i++) {
+			console.log(i + " " + this.cards[i].faceValue + " " + this.cards[i].suitType);
 		}
 	
 	}
 
 	this.getNextCard = function() {
-	    console.log("Deck: Get Card");
+	   // console.log("Deck: Get Card");
 		var len = this.cards.length;
 		var nextCard;
 		if (len > 0) {
@@ -186,6 +203,16 @@ var Deck = function() {
 	this.getCount = function() {
 	    return this.cards.length;
 	}
+	
+	this.shuffle = function () {
+	    for (i=0; i< this.cards.length; i++)
+	    {
+	        randomIndex = Math.floor(Math.random() * this.cards.length);
+	        temp = this.cards[i];
+	        this.cards[i]= this.cards[randomIndex];
+	        this.cards[randomIndex] = temp;
+	    }	  
+    }
     
 };
 

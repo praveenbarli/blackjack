@@ -3,6 +3,8 @@
   <h1 align='middle'>Black Jack Game</h1>
      <script src="dealer.js" type = "text/JavaScript"></script>
 	  <script src="Hand.js" type = "text/JavaScript"></script>
+	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	 <script src="jquery-1.8.2.min"></script>
    <script type="text/JavaScript">
        /* $(document).ready(function() {
                 console.log( "ready!" );
@@ -14,17 +16,47 @@
            
             cardgame.startGame();
 //cardgame.Hit();
-        }
+        };
 		function hit(){
 		   cardgame.Hit();
-		}
+		};
 		
 		function stand(){
 		   cardgame.Stand();
-		}
+		};
+		
+		function testBlackJack(){
+		  var p = new Hand();
+		  p.addCard(new Card("jack",SuitType.DIAMOND));
+		  p.addCard(new Card("nine",SuitType.HEART));
+		  
+		  //console.log("p status " + p.getStatus());
+		  cardgame.deck.cards.push(new Card("two",SuitType.SPADE));
+		  var d = new Hand();
+		  d.addCard(new Card("jack",SuitType.SPADE));
+		  d.addCard(new Card("seven",SuitType.CLUB));
+		  cardgame.evaluateDealerStatus();
+		};
+		/*
+		 $(document).ready(function() {
+			console.log( "ready!" );
+			
+			if(cardgame !=null && cardgame.player != null ) {
+			    var len = cardgame.player.cards.length;
+				if(len > 0){
+					$.each(cardgame.player.cards , function( card ) {
+						console.log( card.faceValue + ": " + card.SuitType );
+					});	
+				}
+			}
+		});
+		*/
+		 
+		 
     </script>
   </head>
   <body>
+  
      <table class="auto-style1">
         <tr>
             <td class="auto-style4"></td>
@@ -36,10 +68,13 @@
                 <input id="startgame" type="submit" value="Start Game" onclick="startGame()"/>
                 <input id="hit" type="submit" value="Hit" onclick="hit()" />
                 <input id="stand" type="submit" value="Stand" onclick="stand()"/>
+				
+				<input id="testBlackJack" type="submit" value="Test_PlayerScore" onclick="testBlackJack()"/>
 
             </td>
         </tr>
     </table>
+	
     
   </body>
 
