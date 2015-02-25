@@ -25,9 +25,69 @@ CardGame.prototype.startGame = function () {
 	this.distributeCards(this.dealer, 2);
 	console.log("cards length after removing two" + this.deck.getCount());
 	
-	console.log("Player score" + this.player.score());
-			
+	//console.log("Player status" + this.player.getStatus());
+	
+		this.evaluatePlayerStatus();		
 };
+
+CardGame.prototype.evaluatePlayerStatus = function() {
+      var currentPlayerStatus = this.player.getStatus();
+	if(currentPlayerStatus == "ingame" || currentPlayerStatus == "stand"){
+	    console.log("In Game. enable hit, stand. ");
+	} else if(currentPlayerStatus == "blackJack"){
+	    console.log("Player wins . BlackJack . Disable hit, stand.");
+	} else {
+	   console.log("Dealer WINS. Player busted, Disable hit, stand. ");
+	}
+};
+
+CardGame.prototype.Hit = function(hand){
+  console.log("hit called");
+  if(hand == undefined) {
+     hand = this.player;
+	}
+  
+  this.distributeCards(hand, 1);
+  if(hand.name == "dealer"){
+    this.evaluateDealerStatus();
+  }else{
+    this.evaluatePlayerStatus();
+	}
+  
+};
+
+CardGame.prototype.Stand = function(){
+  console.log("stand called");
+  this.evaluateDealerStatus();
+  
+  };
+  
+  CardGame.prototype.evaluateDealerStatus = function() {
+      var currentDealerStatus = this.player.getStatus();
+	if(currentDealerStatus == "busted"){
+	    console.log("Player WINS. Dealer busted. Enable Start game button and disable hit, stand. ");
+	    
+	} else if(currentDealerStatus == "blackJack"){
+	    console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
+	} else if(currentDealerStatus == "stand"){
+	      var dealerScore = this.dealer.getScore();
+		  var playerScore = this.player.getScore();
+		  if(dealerScore>playerScore){
+		      console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
+		  } else if(dealerScore == playerScore){
+		       console.log("Tie. Enable Start game. Disable hit, stand.");
+		  } else{
+		      hit(this.dealer);
+		  }
+	} else {
+	    hit(this.dealer);
+	}
+};
+
+
+
+
+
 CardGame.prototype.distributeCards = function(hand,count){
      console.log("Giving " + count + " cards to " + hand.name);
 	 var cardsAvail = this.deck.length;
