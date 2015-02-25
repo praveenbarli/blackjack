@@ -6,6 +6,22 @@ var CardGame = function () {
   this.player = new Hand("Player");
   this.dealer = new Hand("Dealer");
   this.status = GameStatus.STOPPED;
+  
+  
+  this.getCardsBack = function() {
+	          var playerCards = this.player.returnCards();
+		
+		console.log("len of returned player cards" + playerCards.length);
+	   for(var card in playerCards){
+	      console.log(card.faceValue + " " + card.suitType);
+	   }
+	   var dealerCards = this.dealer.returnCards();
+	   console.log("len of returned dealer cards" + dealerCards.length);
+	   this.deck.addCardsBack(playerCards);
+	   this.deck.addCardsBack(dealerCards);
+	   
+	
+	};
 };
 
 
@@ -30,7 +46,8 @@ CardGame.prototype.startGame = function () {
 	
 	//console.log("Player status" + this.player.getStatus());
 	
-		this.evaluatePlayerStatus();		
+		this.evaluatePlayerStatus();
+        $("#startgame_btn").attr('disabled',true);		
 };
 
 var GameStatus = { STARTED:"started", STOPPED:"stopped"}
@@ -41,10 +58,26 @@ CardGame.prototype.evaluatePlayerStatus = function() {
 	  console.log("Player status" + currentPlayerStatus);
 	if(currentPlayerStatus == HandStatus.INGAME || currentPlayerStatus == HandStatus.STAND){
 	    console.log("In Game. enable hit, stand. ");
+		$("#hit").attr('disabled',false); 
+		$("#stand").attr('disabled',false);
 	} else if(currentPlayerStatus == HandStatus.BLACKJACK){
-	    console.log("Player wins . BlackJack . Disable hit, stand.");
+	     if(this.dealer.getStatus() == HandStatus.BLACKJACK)
+		 {
+		    console.log("Game tie. BlackJack for both player and dealer. Disable hit, stand. Enable start game");
+		 }else{
+	         console.log("Player wins . BlackJack. Disable hit, stand. Enable start game");
+			 
+		}
+		this.getCardsBack();
+		$("#hit").attr('disabled',true);
+		$("#stand").attr('disabled',true);
+		$("#startgame_btn").attr('disabled',false);
 	} else {
+	    this.getCardsBack();
 	   console.log("Dealer WINS. Player busted, Disable hit, stand. ");
+	   $("#hit").attr('disabled',true);
+	   $("#stand").attr('disabled',true);
+	   $("#startgame_btn").attr('disabled',false);
 	}
 };
 
@@ -75,17 +108,32 @@ CardGame.prototype.Stand = function(){
 	  console.log("Dealer status :" + currentDealerStatus);
 	if(currentDealerStatus == HandStatus.BUSTED){
 	    console.log("Player WINS. Dealer busted. Enable Start game button and disable hit, stand. ");
-	    
+	    this.getCardsBack();
+		$("#hit").attr('disabled',true);
+	    $("#stand").attr('disabled',true);
+	    $("#startgame_btn").attr('disabled',false);
 	} else if(currentDealerStatus == HandStatus.BLACKJACK){
 	    console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
+		this.getCardsBack();
+		$("#hit").attr('disabled',true);
+	    $("#stand").attr('disabled',true);
+	    $("#startgame_btn").attr('disabled',false);
 	} else if(currentDealerStatus == HandStatus.STAND){
 	      var dealerScore = this.dealer.getScore();
 		  var playerScore = this.player.getScore();
 		  console.log("dealer score" + dealerScore + "playerscore: " + playerScore);
 		  if(dealerScore > playerScore){
 		      console.log("Dealer wins . Enable Start game. Disable hit, stand.");
+			  this.getCardsBack();
+			  $("#hit").attr('disabled',true);
+	          $("#stand").attr('disabled',true);
+			  $("#startgame_btn").attr('disabled',false);
 		  } else if(dealerScore == playerScore){
 		       console.log("Tie. Enable Start game. Disable hit, stand.");
+			   this.getCardsBack();
+			   $("#hit").attr('disabled',true);
+	           $("#stand").attr('disabled',true);
+	           $("#startgame_btn").attr('disabled',false);
 		  } else{
 		      this.Hit(this.dealer);
 		  }
@@ -213,6 +261,17 @@ var Deck = function() {
 	        this.cards[randomIndex] = temp;
 	    }	  
     }
+	
+	this.addCardsBack = function(returnedCards) {
+	
+	  console.log("deck size before adding back cards " + this.cards.length);
+	   for(var c in returnedCards){
+          this.cards.push(c);
+        }	   
+	   console.log("deck size after adding back cards " + this.cards.length);
+	}
+	
+	
     
 };
 

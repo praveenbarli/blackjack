@@ -1,36 +1,46 @@
 <html>
+
   <head>
   <h1 align='middle'>Black Jack Game</h1>
      <script src="dealer.js" type = "text/JavaScript"></script>
 	  <script src="Hand.js" type = "text/JavaScript"></script>
 	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	 <script type="text/JavaScript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
 	 <script src="jquery-1.8.2.min"></script>
 	  <script src="stylesheet.css"></script>
-   <script type="text/JavaScript">
-       /* $(document).ready(function() {
+     <script type="text/JavaScript">
+      /*  $(document).ready(function() {
                 console.log( "ready!" );
-               
-       });*/
+          // $(document).formid.hit.onclick = cardgame.Hit();   
+		 // $("#hit").onclick = cardgame.Hit;
+       });
+	   */
+	  /* window.onload = function() {
+        document.myform.action = get_action();
+        }
+    
+    function get_action() {
+        return form_action;
+    }*/
 	   var cardgame = new CardGame();
         function startGame(){
            console.log( "Game Started!" );
-           
-            cardgame.startGame();
-			bind();
-//cardgame.Hit();
-$("#hit").removeAttr('disabled');
-//$("#startgame_btn").attr('disabled',true);
+		   $("ol").empty();
+           cardgame.startGame();
         };
-		function hit(){
-		   cardgame.Hit();
-		   bind();
-		   
-		};
 		
-		function stand(){
+		getCardsBack = function(){
+		   cardgame.getCardsBack();
+		}
+		hit = function() {
+		   cardgame.Hit();
+		 };
+		/* window.onload = function(){
+		document.form_id.hit.onclick = cardgame.Hit();
+		}*/
+		function rand(){
 		   cardgame.Stand();
-		   bind();
-		};
+		 };
 		
 		function testBlackJack(){
 		  var p = new Hand();
@@ -44,21 +54,7 @@ $("#hit").removeAttr('disabled');
 		  d.addCard(new Card("seven",SuitType.CLUB));
 		  cardgame.evaluateDealerStatus();
 		};
-		/*
-		 $(document).ready(function() {
-			console.log( "ready!" );
-			
-			if(cardgame !=null && cardgame.player != null ) {
-			    var len = cardgame.player.cards.length;
-				if(len > 0){
-					$.each(cardgame.player.cards , function( card ) {
-						console.log( card.faceValue + ": " + card.SuitType );
-					});	
-				}
-			}
-		});
-		*/
-		 
+				 
 		 
     </script>
 	
@@ -69,57 +65,35 @@ $("#hit").removeAttr('disabled');
         </li>
 	</script>
   </head>
+  
+
   <body>
-   <div id="place_holder1" />
-			  <script type="text/JavaScript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.4.js"></script>
-              <script type="text/JavaScript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
-			  <script src="jquery-1.8.2.min"></script>
-				<script type="text/JavaScript">  
-                    function bind(){
-					var playercards;//= ["Spade Ace" ,2,3];   
-					//var cards = [];
-					//cards.push("spade" + "one");
-					//cards.push("diamond" + "Jack");
-                    if(cardgame != undefined){
-					   console.log("data binding ...");
-					    playercards = cardgame.player.getCards();
-					    //array_of_ints = cards;
-					   console.log("length of data" + playercards.length + "\n");
-					  
-					   for(var pc in playercards)
-					       console.log(playercards[i] + " ");
-					   
-                    }					
-					$("#template")
-					.tmpl(playercards)
-					.appendTo("#placeholder");
-					/*$("#ta_player").val($("#template").tmpl(array_of_ints).html());
-					*/
-					}
-					
-                </script>
+   <!-- <form METHOD = "GET" autocomplete = "off">-->
+			
      <table align=center cellpadding=10 cellspacing=10 border=10; class="auto-style1">
         <tr align = center width="100%" height ="100%">
             
 			<td class="auto-style4" width = "50%" height ="200">
 				<label style="display:block">Player cards:</label>	 		
-			  <ol class = "wrapper" id="placeholder">
+			  <ol class = "wrapper" id="Player">
                  </ol>
 			</td>
 			
 			<td class="auto-style4" width = "50%">
 			 	<label style="display:block">Dealer cards:</label>
-			  
+			     <ol class = "wrapper" id="Dealer">
+                 </ol>
 			</td>
         </tr>
         <tr align =center width="100%">
             <td class="auto-style3">
 			
-                <input id="startgame_btn" type="button" value="Start Game" onclick="startGame()"/>
-                <input id="hit" type="button" value="Hit" onclick="hit()" disabled />
-                <input id="stand" type="button" value="Stand" onclick="stand()" disabled/>
+                <input id="startgame_btn" type="button" autocomplete="off" value="Start Game" onclick="startGame();" />
+                <input id="hit" type="button" value="Hit" autocomplete="off" onclick="hit()" disabled = "true" />
+                <input id="stand" type="button" value="Stand" autocomplete="off" onclick="rand()" disabled = "true"/>
 				
-				<input id="testBlackJack" visible =false type="button" value="Test_PlayerScore" onclick="testBlackJack()"/>
+				<input id="testBlackJack"  type="button" value="Test_PlayerScore" onclick="testBlackJack()"/>
+				<input id="getCardsBack"  type="button" value="Test_PlayerScore" onclick="getCardsBack()"/>
           
             </td>
         </tr>
@@ -130,8 +104,8 @@ $("#hit").removeAttr('disabled');
 			</td>
 		</tr>
     </table>
-	
-    
+
+   
   </body>
 
 </html>

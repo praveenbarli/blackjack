@@ -1,13 +1,13 @@
 var Hand = function(name) {
     //member variables
    // this.cards = [];
-	this.name = name;
+	//this.name = name;
 	//private member
 	var status = HandStatus.INGAME;
 	var cards = [];
     var currentScore = 0;
 	var scoredCardsCnt = 0;
-	var lastReturnedCardIndex=-1;
+	//var lastReturnedCardIndex=-1;
     //private methods
 	function calculateScore() {
 		//console.log("Deck constructor called");
@@ -63,7 +63,11 @@ var Hand = function(name) {
 	};
 	
 	this.addCard = function(newCard){
+	  
 	  cards.push(newCard);
+	  
+	  $("#template").tmpl([newCard.faceValue + ", " + newCard.suitType])
+					.appendTo("#" + name);
 	}
 	
 	this.getScore = function(){
@@ -75,14 +79,21 @@ var Hand = function(name) {
 		
 	}
 	
-	this.getCards = function(){
+	/*this.getCards = function(){
 	    var card_values = [];
 	    for(var i = lastReturnedCardIndex +1; i<cards.length;i++){
 		  card_values.push(cards[i].faceValue + " " + cards[i].suitType);
 		}
 		lastReturnedCardIndex = i -1;
 		return card_values;
+	}*/
+	
+	//return cards back after the game
+	this.returnCards = function(){
+	  // console.log("len before returning" + cards.length);
+	  return cards.splice(0,cards.length);
 	}
+	
 		
 }
 
