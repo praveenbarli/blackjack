@@ -31,8 +31,9 @@ var Hand = function(name) {
 		}
 		
 		if((score + 10 <= 21) && haveAce){
-		    score += 10;
+		    score =score+ 10;
 		}
+		
 		console.log("current score of " + name + " is " + score);
 		//return score;
 		currentScore = score;

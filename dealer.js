@@ -17,6 +17,7 @@ var CardGame = function () {
 	   }
 	   var dealerCards = this.dealer.returnCards();
 	   console.log("len of returned dealer cards" + dealerCards.length);
+	   
 	   this.deck.addCardsBack(playerCards);
 	   this.deck.addCardsBack(dealerCards);
 	   
@@ -24,12 +25,17 @@ var CardGame = function () {
 	};
 };
 
+CardGame.prototype.UpdateStatus = function (status) {
+    
+    $("#labelTemplate").tmpl([status])
+                  .appendTo("#statusLabel");
+}
 
 //member methods
 CardGame.prototype.startGame = function () {
     console.log("Hello, I'm ");
 	 
-     
+    
 	 //Initialize deck and shuffle
 	 this.deck.setup();
 	 this.deck.shuffle();
@@ -53,7 +59,8 @@ CardGame.prototype.startGame = function () {
 var GameStatus = { STARTED:"started", STOPPED:"stopped"}
 
 
-CardGame.prototype.evaluatePlayerStatus = function() {
+CardGame.prototype.evaluatePlayerStatus = function () {
+    
       var currentPlayerStatus = this.player.getStatus();
 	  console.log("Player status" + currentPlayerStatus);
 	if(currentPlayerStatus == HandStatus.INGAME || currentPlayerStatus == HandStatus.STAND){
@@ -64,35 +71,46 @@ CardGame.prototype.evaluatePlayerStatus = function() {
 	     if(this.dealer.getStatus() == HandStatus.BLACKJACK)
 		 {
 		    console.log("Game tie. BlackJack for both player and dealer. Disable hit, stand. Enable start game");
-		 }else{
+	     } else {
+	         this.UpdateStatus("Player wins!!");
+	         $("#hit").attr('disabled', true);
+	         $("#stand").attr('disabled', true);
+	         $("#stand").attr('disabled', false);
 	         console.log("Player wins . BlackJack. Disable hit, stand. Enable start game");
 			 
 		}
-		this.getCardsBack();
-		$("#hit").attr('disabled',true);
-		$("#stand").attr('disabled',true);
-		$("#startgame_btn").attr('disabled',false);
+	     endGameUpdatestatus();
 	} else {
-	    this.getCardsBack();
-	   console.log("Dealer WINS. Player busted, Disable hit, stand. ");
-	   $("#hit").attr('disabled',true);
-	   $("#stand").attr('disabled',true);
-	   $("#startgame_btn").attr('disabled',false);
+	    this.UpdateStatus("Player Busted, Dealer Wins");
+	    console.log("Dealer WINS. Player busted, Disable hit, stand. ");
+	    $("#startgame_btn").attr('disabled', false);
+	    $("#hit").attr('disabled', true);
+	    $("#stand").attr('disabled', true);
+	    endGameUpdatestatus();
 	}
+
 };
 
-CardGame.prototype.Hit = function(hand){
-  
-  if(hand == undefined) {
-     hand = this.player;
-	}
-  console.log("hit called by " + hand.name);
-  this.distributeCards(hand, 1);
-  if(hand.name == "Dealer"){
-    this.evaluateDealerStatus();
-  }else{
+endGameUpdatestatus= function() 
+{
+    this.getCardsBack();
+    $("#hit").attr('disabled', true);
+    $("#stand").attr('disabled', true);
+    $("#startgame_btn").attr('disabled', false);
+}
+
+CardGame.prototype.Hit = function()
+{
+  //if(hand == undefined) {
+  //   hand = this.player;
+  //  }
+  //console.log("hit called by " + hand.name);
+  this.distributeCards(this.player, 1);
+  //if(hand.name == "Dealer"){
+  //  this.evaluateDealerStatus();
+  //}else{
     this.evaluatePlayerStatus();
-	}
+	
   
 };
 
@@ -106,47 +124,53 @@ CardGame.prototype.Stand = function(){
   CardGame.prototype.evaluateDealerStatus = function() {
       var currentDealerStatus = this.dealer.getStatus();
 	  console.log("Dealer status :" + currentDealerStatus);
-	if(currentDealerStatus == HandStatus.BUSTED){
+	  if (currentDealerStatus == HandStatus.BUSTED) {
+	      this.UpdateStatus("Dealer Busted:-)");
 	    console.log("Player WINS. Dealer busted. Enable Start game button and disable hit, stand. ");
 	    this.getCardsBack();
-		$("#hit").attr('disabled',true);
-	    $("#stand").attr('disabled',true);
-	    $("#startgame_btn").attr('disabled',false);
+	    endGameUpdatestatus();
+	    
 	} else if(currentDealerStatus == HandStatus.BLACKJACK){
 	    console.log("Dealer wins . BlackJack . Enable Start game. Disable hit, stand.");
 		this.getCardsBack();
-		$("#hit").attr('disabled',true);
-	    $("#stand").attr('disabled',true);
-	    $("#startgame_btn").attr('disabled',false);
-	} else if(currentDealerStatus == HandStatus.STAND){
+		endGameUpdatestatus();
+    } else if (currentDealerStatus == HandStatus.STAND) {
 	      var dealerScore = this.dealer.getScore();
 		  var playerScore = this.player.getScore();
 		  console.log("dealer score" + dealerScore + "playerscore: " + playerScore);
 		  if(dealerScore > playerScore){
 		      console.log("Dealer wins . Enable Start game. Disable hit, stand.");
 			  this.getCardsBack();
-			  $("#hit").attr('disabled',true);
-	          $("#stand").attr('disabled',true);
-			  $("#startgame_btn").attr('disabled',false);
-		  } else if(dealerScore == playerScore){
+			  endGameUpdatestatus();
+			  this.UpdateStatus("Dealer wins!!)");
+		  } else if (dealerScore == playerScore) {
+		      this.UpdateStatus("Game Tie");
 		       console.log("Tie. Enable Start game. Disable hit, stand.");
 			   this.getCardsBack();
-			   $("#hit").attr('disabled',true);
-	           $("#stand").attr('disabled',true);
-	           $("#startgame_btn").attr('disabled',false);
-		  } else{
-		      this.Hit(this.dealer);
+			   endGameUpdatestatus();
+			   this.UpdateStatus("Game Tie!)");
+           } else {
+		      this.distributeCards(this.dealer, 1);
+		      this.evaluateDealerStatus();
 		  }
 	} else {
-	    this.Hit(this.dealer);
+	    
+	    this.distributeCards(this.dealer, 1);
+	   this.evaluateDealerStatus();
+        
 	}
 };
 
+function  continuegame()
+  {
+      $("#hit").attr('disabled', true);
+      $("#stand").attr('disabled', true);
+      $("#startgame_btn").attr('disabled', false);
+  }
 
 
 
-
-CardGame.prototype.distributeCards = function(hand,count){
+CardGame.prototype.distributeCards =  function(hand,count){
      console.log("Giving " + count + " cards to " + hand.name);
 	 var cardsAvail = this.deck.length;
 	 if(cardsAvail < count){
@@ -154,10 +178,13 @@ CardGame.prototype.distributeCards = function(hand,count){
 		return;
 	} else {
 	    for(var i = 0;i< count;i++){
-            var nextCard = this.deck.getNextCard();
-			hand.addCard(nextCard);
-            //var nextCard = getNextCard(deck.cards);
-            console.log(i+1 + " " + faceValue[nextCard.faceValue] + " " + nextCard.suitType);
+	        var nextCard = this.deck.getNextCard();
+	        
+	        if (typeof (nextCard) != "undefined") {
+	            hand.addCard(nextCard);
+	            //var nextCard = getNextCard(deck.cards);
+	            console.log(i + 1 + " " + faceValue[nextCard.faceValue] + " " + nextCard.suitType);
+	        }
         }
 	}
        
@@ -176,11 +203,11 @@ var Suit = function (suit) {
     this.suitType = suit;
 };
 
-var SuitType = { DIAMOND: 0, HEART: 1, SPADE: 2, CLUB: 3 };
+var SuitType = { Diamond: 0, Heart: 1, Spade: 2, Club: 3 };
 
 var faceValue = {
-ace: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
-    nine: 9, ten: 10, jack: 10, queen: 10, king: 10
+Ace: 1, Two: 2, Three: 3, Four: 4, Five: 5, Six: 6, seven: 7, Eight: 8,
+    Nine: 9, Ten: 10, Jack: 10, Queen: 10, King: 10
 };
 /*var Deck = function () {
     var cards = [];
